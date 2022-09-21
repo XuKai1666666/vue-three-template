@@ -13,31 +13,44 @@ const light3 = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
 
 // 加载模型
 function iniLoad() {
-  const loader = new THREE.ObjectLoader();
+  // const loader = new THREE.ObjectLoader();
 
-  loader.load(
-    // 资源的URL
-    "src/assets/uh-60-blackhawk-helicopter-threejs/uh-60-blackhawk-helicopter.json",
+  // loader.load(
+  //   // 资源的URL
+  //   "src/assets/uh-60-blackhawk-helicopter-threejs/uh-60-blackhawk-helicopter.json",
 
-    // onLoad回调
-    // Here the loaded data is assumed to be an object
-    function (obj) {
-      // Add the loaded object to the scene
-      scene.add(obj);
-      renderer.setSize(100, 100)
-		renderer.render(scene, camera)
-    },
+  //   // onLoad回调
+  //   // Here the loaded data is assumed to be an object
+  //   function (obj) {
+  //     // Add the loaded object to the scene
+  //     scene.add(obj)
+  //     renderer.render(scene, camera)
+  //   },
 
-    // onProgress回调
-    function (xhr) {
-      console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-    },
+  //   // onProgress回调
+  //   function (xhr) {
+  //     console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+  //   },
 
-    // onError回调
-    function (err) {
-      console.error('An error happened');
-    }
-  );
+  //   // onError回调
+  //   function (err) {
+  //     console.error('An error happened');
+  //   }
+  // )
+  const geometry = new THREE.BoxGeometry(100, 100, 100)
+  //创建材质（外观）
+  const material = new THREE.MeshLambertMaterial({
+    color: 0x00ffff,//设置材质颜色
+    transparent: true,//开启透明度
+    opacity: 0.5 //设置透明度
+  })
+  //创建一个网格模型对象,将上面设置好的物体及其材质注入到模型对象中
+  const mesh = new THREE.Mesh(geometry, material)
+  // console.log('getWorldScale  '+mesh.getWorldScale(scene));
+  mesh.scale
+  console.log('scale  ' + mesh.scale);
+  scene.add(mesh)
+  renderer.render(scene, camera)
 }
 
 //场景
@@ -66,36 +79,27 @@ function iniLight() {
   light3.position.set(0, 200, 0);
   scene.add(light3);
 }
-//地面 和 辅助网格
-// function iniPlane() {
-//   // var planeGeo = new THREE.PlaneGeometry(40, 40);
-//   var planeMat = new THREE.MeshPhongMaterial({ color: 0x999999 });
-//   // var plane = new THREE.Mesh(planeGeo, planeMat);
-//   plane.receiveShadow = true;
-//   plane.position.y = -0.01;
-//   plane.rotation.x = -0.5 * Math.PI;
-//   scene.add(plane);
+// 地面 和 辅助网格
+function iniPlane() {
+  var planeGeo = new THREE.PlaneGeometry(40, 40);
+  var planeMat = new THREE.MeshPhongMaterial({ color: 0x999999 });
+  var plane = new THREE.Mesh(planeGeo, planeMat);
+  plane.receiveShadow = true;
+  plane.position.y = -0.01;
+  plane.rotation.x = -0.5 * Math.PI;
+  scene.add(plane);
 
 
-//   // grid.material.transparent = true;
-//   // grid.material.opacity = 0.3;
-//   scene.add(grid);
-// }
-//相机轨道控制器
+  // grid.material.transparent = true;
+  // grid.material.opacity = 0.3;
+  scene.add(grid);
+}
+// 相机轨道控制器
 function orbitControls() {
-
-  //自转
-  controls.autoRotate = true;
-  controls.autoRotateSpeed = 0.02;
-  //阻尼 阻尼系数
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.4;
-  //缩放
-  controls.enableZoom = true;
-  controls.minDistance = 5;
-  controls.maxDistance = 100;
-  //右键拖拽
-  controls.enablePan = true;
+  controls.addEventListener('change', () => {
+    //重新渲染
+    renderer.render(scene, camera)
+  })
 }
 //改变窗口大小
 function windowResize() {
@@ -113,7 +117,7 @@ function drawScene() {
   iniLight();
   orbitControls();
   windowResize();
-  // iniPlane();
+  iniPlane();
   iniLoad();
 }
 drawScene();
@@ -125,7 +129,7 @@ onMounted(() => {
 </script>
 
 <template>
-<div id="demo"></div>
+  <div id="demo" style="width: 100% ;height: 100%;"></div>
 </template>
 
 <style scoped>
